@@ -1,0 +1,1109 @@
+class EditStartupClaimProfile(APIView):
+
+    """ 
+
+    Summary line. 
+
+    This function make request  for  startup claim ids
+
+    Parameters: 
+
+    request : take  token 
+
+    Returns: 
+
+    return Response claimed_id ,msg
+
+    """
+
+    def post(self,request):
+
+        try:
+
+            if not request.data:
+
+                raise AuthenticationFailed('Unauthenticated!')
+
+            data = request.data
+
+            token = data.get('token')
+
+            if not token:
+
+                logger.info("Token must contain bytes")
+
+                raise AuthenticationFailed('Unauthenticated!')
+
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+
+            input_data = data.get('companyDetails')
+
+            response = Response()
+
+            user_id=payload['id']
+
+            if StartupClaimRequest.objects.filter(startup_company_id=input_data['id'],is_approved=1,user_id=payload['id']).exists():
+
+                isChanged = False
+
+                logger.info("inside else for updating the company")
+
+                #logger.info(companyDetailsObject.startup_company_id)
+
+                logger.info("Name of company to edit:: " + input_data['companyName']) 
+
+                companyDetailsObject = StartupCompanyDetails.objects.get(startup_company_id=input_data['id'])
+
+                if str(companyDetailsObject.startup_company_name) != str(input_data['companyName']):
+
+                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Startup Company Name',previous_value=companyDetailsObject.startup_company_name,new_value=input_data['companyName'],update_date=timezone.now(),update_by=user_id).save()
+
+                    isChanged = True
+
+                if str(companyDetailsObject.country.country_name) != str(input_data['country']):
+
+                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Country',previous_value=companyDetailsObject.country.country_name,new_value=input_data['country'],update_date=timezone.now(),update_by=user_id).save()
+
+                    isChanged = True
+
+                if companyDetailsObject.company_contact is None and input_data['phone'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_contact != input_data['phone']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Phone Number',previous_value=companyDetailsObject.company_contact,new_value=input_data['phone'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True 
+
+                if companyDetailsObject.linkedin_url is None and input_data['linkedin'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.linkedin_url != input_data['linkedin']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company LinkedIn URL',previous_value=companyDetailsObject.linkedin_url,new_value=input_data['linkedin'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_website is None and input_data['website'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_website != input_data['website']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Website URL',previous_value=companyDetailsObject.company_website,new_value=input_data['website'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_address is None and input_data['address'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_address != input_data['address']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Address',previous_value=companyDetailsObject.company_address,new_value=input_data['address'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_suit is None and input_data['suit'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_suit != input_data['suit']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Suite',previous_value=companyDetailsObject.company_suit,new_value=input_data['suit'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_city is None and input_data['city'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_city!= input_data['city']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company City',previous_value=companyDetailsObject.company_city,new_value=input_data['city'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_state is None and input_data['stateName'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_state != input_data['stateName']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company State',previous_value=companyDetailsObject.company_state,new_value=input_data['stateName'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.zipcode is None and input_data['zipCode'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.zipcode != input_data['zipCode']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Zip Code',previous_value=companyDetailsObject.zipcode,new_value=input_data['zipCode'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_logo_link is None and input_data['companyLogo'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_logo_link != input_data['companyLogo']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Logo',previous_value=companyDetailsObject.company_logo_link,new_value=input_data['companyLogo'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.company_description is None and input_data['companyDescription'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.company_description !=input_data['companyDescription']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Description',previous_value=companyDetailsObject.company_description,new_value=input_data['companyDescription'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if companyDetailsObject.video_link is None and input_data['companyVideo'] == "":
+
+                    pass
+
+                else:
+
+                    if companyDetailsObject.video_link!=  input_data['companyVideo']:
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Company Video Embed Link',previous_value=companyDetailsObject.video_link,new_value=input_data['companyVideo'],update_date=timezone.now(),update_by=user_id).save()
+
+                        isChanged = True
+
+                if input_data["financingRound"]!="":
+
+                    financingRoundObj = FinancingRoundMaster.objects.get(financing_round=input_data["financingRound"], is_active=1)
+
+                    if companyDetailsObject.financing_round !=financingRoundObj:
+
+                        StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Financing Round' ,previous_value=companyDetailsObject.financing_round,new_value=financingRoundObj.financing_round,update_date=timezone.now(),update_by=user_id).save()
+
+                        #There might be isChanged=True here
+
+                    companyDetailsObject.financing_round = financingRoundObj
+
+                if input_data["isRaising"] =="Yes":
+
+                    logger.info("is raising inside yes")
+
+                    logger.info("companyDetailsObject.is_fundraising:: ")
+
+                    logger.info(companyDetailsObject.is_fundraising)
+
+                    logger.info("str(1.0):: " + str(1))
+
+                    if companyDetailsObject.is_fundraising!=None:
+
+                        if str(companyDetailsObject.is_fundraising)!=str(1):
+
+                            StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Company is Currently Fundraising?' ,previous_value=companyDetailsObject.is_fundraising,new_value=1 ,update_date=timezone.now(),update_by=user_id).save()
+
+                            #There might be isChanged=True here
+
+                    else:
+
+                        StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Company is Currently Fundraising?' ,previous_value=companyDetailsObject.is_fundraising,new_value=1 ,update_date=timezone.now(),update_by=user_id).save()
+
+                        #There might be isChanged=True here
+
+                    companyDetailsObject.is_fundraising = 1
+
+                elif input_data["isRaising"] =="No":
+
+                    logger.info("is raising inside no")
+
+                    logger.info("companyDetailsObject.is_fundraising:: ")
+
+                    logger.info(companyDetailsObject.is_fundraising)
+
+                    logger.info("str(1.0):: " + str(0))
+
+                    if companyDetailsObject.is_fundraising!=None:
+
+                        if str(companyDetailsObject.is_fundraising)!=str(0):
+
+                            StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Company is Currently Fundraising?' ,previous_value=companyDetailsObject.is_fundraising,new_value=0 ,update_date=timezone.now(),update_by=user_id).save()
+
+                            #There might be isChanged=True here
+
+                    else:
+
+                        StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Company is Currently Fundraising?' ,previous_value=companyDetailsObject.is_fundraising,new_value=0 ,update_date=timezone.now(),update_by=user_id).save()
+
+                        #There might be isChanged=True here
+
+                    companyDetailsObject.is_fundraising = 0
+
+                else:
+
+                    logger.info("inside else of is fundraising")
+
+                    companyDetailsObject.is_fundraising = None
+
+                if companyDetailsObject.fund_raised!=None:
+
+                    if str(companyDetailsObject.fund_raised)!= str(input_data["fundsRaised"]) :
+
+                        if input_data["fundsRaised"] != "" and input_data["fundsRaised"] != None and str(input_data["fundsRaised"]).isdigit():
+
+                            if int(companyDetailsObject.fund_raised) != int(input_data["fundsRaised"]):
+
+                                StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Funds Raised to Date (USD)' ,previous_value=companyDetailsObject.fund_raised,new_value=input_data["fundsRaised"],update_date=timezone.now(),update_by=user_id).save()
+
+                        #There might be isChanged=True here
+
+                companyDetailsObject.fund_raised = input_data["fundsRaised"] if input_data["fundsRaised"] != "" else 0
+
+                companyDetailsObject.startup_company_name = input_data['companyName']
+
+                companyDetailsObject.company_contact = input_data['phone'] if input_data['phone'] != "" else None 
+
+                companyDetailsObject.linkedin_url = input_data['linkedin'] if input_data['linkedin'] != "" else None 
+
+                companyDetailsObject.company_website = input_data['website'] if input_data['website'] != "" else None 
+
+                companyDetailsObject.company_address = input_data['address'] if input_data['address'] != "" else None
+
+                companyDetailsObject.company_suit = input_data['suit'] if input_data['suit'] != "" else None
+
+                companyDetailsObject.company_city = input_data['city'] if input_data['city'] != "" else None
+
+                companyDetailsObject.company_state = input_data['stateName'] if input_data['stateName'] != "" else None
+
+                companyDetailsObject.country = CountryMaster.objects.get(country_name = input_data['country'])
+
+                companyDetailsObject.zipcode = input_data['zipCode'] if input_data['zipCode'] != "" else None
+
+                companyDetailsObject.company_logo_link = input_data['companyLogo'] if input_data['companyLogo'] != "" else None
+
+                companyDetailsObject.company_description = input_data['companyDescription'] if input_data['companyDescription'] != "" else None
+
+                companyDetailsObject.video_link =  input_data['companyVideo'] if input_data['companyVideo'] != "" else None
+
+                if isChanged:
+
+                    companyDetailsObject.update_date = timezone.now()
+
+                    companyDetailsObject.update_by = user_id
+
+                companyDetailsObject.save()
+
+                '''
+
+                Executive Update and Delete
+
+                '''
+
+                companyRoleExecutiveObj = CompanyRole.objects.get(company_role="Executive Team")
+
+                logger.info(input_data['executive'])
+
+                for element in input_data['executive']:
+
+                    logger.info("Printing each element of input['executive']")
+
+                    logger.info(element)
+
+                    if str(element['id']).isdigit():
+
+                        if StartupCompanyRole.objects.filter(pk=element['id'], is_active=1).exists():
+
+                            '''
+
+                            Update executive
+
+                            '''
+
+                            startupCompanyRole = StartupCompanyRole.objects.get(pk=element['id'], is_active=1)
+
+                            #companyRoleObj = CompanyRole.objects.get(company_role="Executive Team")
+
+                            if startupCompanyRole.first_name != element["firstName"]:
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive First Name',previous_value=startupCompanyRole.first_name,new_value=element["firstName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.first_name = element["firstName"]
+
+                            if element["lastName"]!="":
+
+                                if startupCompanyRole.last_name != element["lastName"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Last Name',previous_value=startupCompanyRole.last_name,new_value=element["lastName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            if element["suffix"]!="":
+
+                                if startupCompanyRole.suffix != element["suffix"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Suffix',previous_value=startupCompanyRole.suffix,new_value=element["suffix"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.last_name = element["lastName"]
+
+                            if element["title"]!="":
+
+                                if startupCompanyRole.title != element["title"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Title',previous_value=startupCompanyRole.title,new_value=element["title"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.suffix = element["suffix"] if element["suffix"] != "" else None
+
+                            startupCompanyRole.title = element["title"]
+
+                            if element["linkedin"]!="":
+
+                                if startupCompanyRole.linkedin_url != element["linkedin"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive LinkedIn Profile URL',previous_value=startupCompanyRole.linkedin_url,new_value=element["linkedin"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.linkedin_url= element["linkedin"] if element["linkedin"] != "" else None
+
+                            if element["profilePhoto"]!="":
+
+                                if startupCompanyRole.profile_picture_link != element["profilePhoto"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Profile Picture',previous_value=startupCompanyRole.profile_picture_link,new_value=element["profilePhoto"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.profile_picture_link=element["profilePhoto"] if element["profilePhoto"] != "" else None
+
+                            startupCompanyRole.company_role=companyRoleExecutiveObj
+
+                            '''
+
+                            Delete executive
+
+                            '''
+
+                            if(str(element['isDelete']) == 'True'):
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive First Name',previous_value=element["firstName"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Last Name',previous_value=element["lastName"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Title',previous_value=element["title"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["suffix"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Suffix',previous_value=element["suffix"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["linkedin"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive LinkedIn Profile URL',previous_value=element["linkedin"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["profilePhoto"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Profile Picture',previous_value=element["profilePhoto"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                startupCompanyRole.is_active = 0
+
+                            startupCompanyRole.update_date = timezone.now()
+
+                            startupCompanyRole.update_by = user_id
+
+                            startupCompanyRole.save()
+
+                    else:
+
+                            '''
+
+                            Create a new executive
+
+                            '''
+
+                            StartupCompanyRole(company_role=companyRoleExecutiveObj,
+
+                            startup_company=companyDetailsObject,
+
+                            first_name = element["firstName"],
+
+                            last_name = element["lastName"],
+
+                            suffix = element["suffix"] if element["suffix"] != "" else None,
+
+                            title = element["title"],
+
+                            linkedin_url= element["linkedin"] if element["linkedin"] != "" else None,
+
+                            profile_picture_link=element["profilePhoto"] if element["profilePhoto"] != "" else None,
+
+                            is_active = 1,
+
+                            update_date = timezone.now(),
+
+                            update_by = user_id,
+
+                            create_date = timezone.now(),
+
+                            create_by =user_id
+
+                            ).save()
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive First Name',previous_value=None,new_value=element["firstName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Last Name',previous_value=None,new_value=element["lastName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Title',previous_value=None,new_value=element["title"],update_date=timezone.now(),update_by=user_id).save()
+
+                            if element["suffix"]!="":
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Suffix',previous_value=None,new_value=element["suffix"],update_date=timezone.now(),update_by=user_id).save()
+
+                            if element["linkedin"]!="":
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive LinkedIn Profile URL',previous_value=None,new_value=element["linkedin"],update_date=timezone.now(),update_by=user_id).save()
+
+                            if element["profilePhoto"]!="":
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Executive Profile Picture',previous_value=None,new_value=element["profilePhoto"],update_date=timezone.now(),update_by=user_id).save()
+
+                '''
+
+                Bod Update and Delete
+
+                '''
+
+                companyRoleBODObj = CompanyRole.objects.get(company_role="Board of Directors")
+
+                for element in input_data['bod']:
+
+                    if str(element['id']).isdigit():
+
+                        if  StartupCompanyRole.objects.filter(pk=element['id'], is_active=1).exists():
+
+                            startupCompanyRole = StartupCompanyRole.objects.get(pk=element['id'], is_active=1)
+
+                            if startupCompanyRole.first_name != element["firstName"]:
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD First Name',previous_value=startupCompanyRole.first_name,new_value=element["firstName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.first_name = element["firstName"]
+
+                            if element["lastName"]!="":
+
+                                if startupCompanyRole.last_name != element["lastName"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Last Name',previous_value=startupCompanyRole.last_name,new_value=element["lastName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.last_name = element["lastName"]
+
+                            if element["suffix"]!="":
+
+                                if startupCompanyRole.suffix != element["suffix"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Suffix',previous_value=startupCompanyRole.suffix,new_value=element["suffix"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.suffix = element["suffix"] if element["suffix"] != "" else None
+
+                            if element["company"]!="":
+
+                                if startupCompanyRole.company_name != element["company"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Company Name',previous_value=startupCompanyRole.company_name,new_value=element["company"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.company_name = element["company"] if element["company"] != "" else None
+
+                            if element["linkedin"]!="":
+
+                                if startupCompanyRole.linkedin_url != element["linkedin"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD LinkedIn Profile URL',previous_value=startupCompanyRole.linkedin_url,new_value=element["linkedin"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.linkedin_url= element["linkedin"] if element["linkedin"] != "" else None
+
+                            if element["profilePhoto"]!="":
+
+                                if startupCompanyRole.profile_picture_link != element["profilePhoto"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Profile Picture' ,previous_value=startupCompanyRole.profile_picture_link,new_value=element["profilePhoto"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.profile_picture_link=element["profilePhoto"] if element["profilePhoto"] != "" else None
+
+                            startupCompanyRole.company_role=companyRoleBODObj
+
+                            if(str(element['isDelete']) == 'True'):
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD First Name',previous_value=element["firstName"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Last Name',previous_value=element["lastName"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["company"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Company Name',previous_value=element["suffix"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["suffix"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Suffix',previous_value=element["suffix"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["linkedin"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD LinkedIn Profile URL',previous_value=element["linkedin"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["profilePhoto"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Profile Picture',previous_value=element["profilePhoto"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                startupCompanyRole.is_active = 0
+
+                            startupCompanyRole.update_date = timezone.now()
+
+                            startupCompanyRole.update_by = user_id
+
+                            startupCompanyRole.save()
+
+                    else:
+
+                        logger.info("BOD Company role else part")
+
+                        logger.info(companyRoleBODObj)
+
+                        logger.info(companyDetailsObject)
+
+                        StartupCompanyRole(company_role=companyRoleBODObj,
+
+                            startup_company=companyDetailsObject,
+
+                            first_name = element["firstName"],
+
+                            last_name = element["lastName"],
+
+                            suffix = element["suffix"] if element["suffix"] != "" else None,
+
+                            company_name = element["companyName"] if element["companyName"] != "" else None,
+
+                            linkedin_url= element["linkedin"] if element["linkedin"] != "" else None,
+
+                            profile_picture_link=element["profilePhoto"] if element["profilePhoto"] != "" else None,
+
+                            is_active = 1,
+
+                            update_date = timezone.now(),
+
+                            update_by = user_id,
+
+                            create_date = timezone.now(),
+
+                            create_by =user_id
+
+                            ).save()
+
+                        logger.info("After the saving of new BOD in edit claim profile")
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD First Name',previous_value=None,new_value=element["firstName"],update_date=timezone.now(),update_by=user_id).save()
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Last Name',previous_value=None,new_value=element["lastName"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["companyName"]:
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Company Name',previous_value=None,new_value=element["companyName"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["suffix"]!="":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Suffix',previous_value=None,new_value=element["suffix"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["linkedin"]!="":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD LinkedIn Profile URL',previous_value=None,new_value=element["linkedin"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["profilePhoto"]!="":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='BOD Profile Picture',previous_value=None,new_value=element["profilePhoto"],update_date=timezone.now(),update_by=user_id).save()
+
+                '''
+
+                Clinical/Scientific Update and Delete
+
+                '''
+
+                companyRoleClinicalObj = CompanyRole.objects.get(company_role="Clinical/Scientific Advisory")
+
+                for element in input_data['clinical']:
+
+                    if str(element['id']).isdigit():
+
+                        if StartupCompanyRole.objects.filter(pk=element['id'], is_active=1):
+
+                            startupCompanyRole = StartupCompanyRole.objects.get(pk=element['id'], is_active=1)
+
+                            if startupCompanyRole.first_name != element["firstName"]:
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor First Name',previous_value=startupCompanyRole.first_name,new_value=element["firstName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            if  element["lastName"]:
+
+                                if startupCompanyRole.last_name != element["lastName"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Last Name',previous_value=startupCompanyRole.last_name,new_value=element["lastName"],update_date=timezone.now(),update_by=user_id).save()
+
+                            if element["suffix"]!="":
+
+                                if startupCompanyRole.suffix != element["suffix"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Suffix',previous_value=startupCompanyRole.suffix,new_value=element["suffix"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.first_name = element["firstName"]
+
+                            startupCompanyRole.last_name = element["lastName"]
+
+                            startupCompanyRole.suffix = element["suffix"] if element["suffix"] != "" else None
+
+                            if element["title"]!="":
+
+                                if startupCompanyRole.title != element["title"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Title',previous_value=startupCompanyRole.title,new_value=element["title"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.title = element["title"] if element["title"] != "" else None
+
+                            if element["company"]!= "":
+
+                                if startupCompanyRole.company_name !=  element["company"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Company/Institution Name',previous_value=startupCompanyRole.company_name,new_value=element["company"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.company_name = element["company"] if element["company"] != "" else None
+
+                            if  element["linkedin"]!="":
+
+                                if startupCompanyRole.linkedin_url != element["linkedin"]:
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor LinkedIn Profile URL',previous_value=startupCompanyRole.linkedin_url,new_value=element["linkedin"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.linkedin_url= element["linkedin"] if element["linkedin"] != "" else None
+
+                            if startupCompanyRole.profile_picture_link != element["profilePhoto"]:
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Profile Picture' ,previous_value=startupCompanyRole.profile_picture_link,new_value=element["profilePhoto"],update_date=timezone.now(),update_by=user_id).save()
+
+                            startupCompanyRole.profile_picture_link=element["profilePhoto"] if element["profilePhoto"] != "" else None
+
+                            startupCompanyRole.company_role=companyRoleClinicalObj
+
+                            if(str(element['isDelete']) == 'True'):
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor First Name',previous_value=element["firstName"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Last Name',previous_value=element["lastName"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Title',previous_value=element["title"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["suffix"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Suffix',previous_value=element["suffix"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["linkedin"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor LinkedIn Profile URL',previous_value=element["linkedin"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                if element["profilePhoto"]!="":
+
+                                    StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Profile Picture',previous_value=element["profilePhoto"],new_value="Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                                startupCompanyRole.is_active = 0
+
+                            startupCompanyRole.update_date = timezone.now()
+
+                            startupCompanyRole.update_by = user_id
+
+                            startupCompanyRole.save()
+
+                    else:
+
+                        StartupCompanyRole(company_role=companyRoleClinicalObj,
+
+                            startup_company=companyDetailsObject,
+
+                            first_name = element["firstName"],
+
+                            last_name = element["lastName"],
+
+                            suffix = element["suffix"] if element["suffix"] != "" else None,
+
+                            title = element["title"] if element["title"] != "" else None,
+
+                            company_name = element["companyName"] if element["companyName"] != "" else None,
+
+                            linkedin_url= element["linkedin"] if element["linkedin"] != "" else None,
+
+                            profile_picture_link=element["profilePhoto"] if element["profilePhoto"] != "" else None,
+
+                            is_active = 1,
+
+                            update_date = timezone.now(),
+
+                            update_by = user_id,
+
+                            create_date = timezone.now(),
+
+                            create_by =user_id
+
+                            ).save()
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor First Name',previous_value=None,new_value=element["firstName"],update_date=timezone.now(),update_by=user_id).save()
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Last Name',previous_value=None,new_value=element["lastName"],update_date=timezone.now(),update_by=user_id).save()
+
+                        StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Title',previous_value=None,new_value=element["title"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["suffix"]!="":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Suffix',previous_value=None,new_value=element["suffix"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["linkedin"]!="":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor LinkedIn Profile URL',previous_value=None,new_value=element["linkedin"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["profilePhoto"]!="":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Profile Picture',previous_value=None,new_value=element["profilePhoto"],update_date=timezone.now(),update_by=user_id).save()
+
+                        if element["companyName"]!= "":
+
+                            StartupChangeLog(startup_company_id=companyDetailsObject.startup_company_id,affected_column_name='Advisor Company/Institution Name',previous_value=None,new_value=element["companyName"],update_date=timezone.now(),update_by=user_id).save()
+
+                '''
+
+                Technology
+
+                '''
+
+                idList = []
+
+                technologyMappingObj = StartupTechnologyMapping.objects.filter(startup_company=companyDetailsObject, is_active=1)
+
+                stored_data=[]
+
+                for object in technologyMappingObj:
+
+                    stored_data.append(object.technology_type.technology_type)
+
+                new_ids=input_data["technologyType"]
+
+                for element in input_data["technologyType"]:
+
+                    technologyTypeMasterObj = TechnologyTypeMaster.objects.get(technology_type=element)
+
+                    idList.append(technologyTypeMasterObj.technology_type_id)
+
+                for element in input_data["technologyType"]:
+
+                    logger.info("Technology type Mapping")
+
+                    logger.info("Element:: " + element)
+
+                    StartupTechnologyMappingObject = StartupTechnologyMapping.objects.filter(startup_company = companyDetailsObject, is_active=1) 
+
+                    #Delete Technology is not exist in updated list
+
+                    for item in StartupTechnologyMappingObject:
+
+                        if item.technology_type.technology_type_id not in idList:
+
+                            item.is_active = 0
+
+                            item.update_date = timezone.now()
+
+                            item.update_by = user_id
+
+                            item.save()
+
+                    #add new technology if not exists previously
+
+                    technologyTypeMasterObjToAdd = TechnologyTypeMaster.objects.get(technology_type=element)
+
+                    startupTechMappingObjIn  = StartupTechnologyMapping.objects.filter(startup_company = companyDetailsObject, technology_type = technologyTypeMasterObjToAdd, is_active = 1)
+
+                    if StartupTechnologyMapping.objects.filter(startup_company = companyDetailsObject, technology_type = technologyTypeMasterObjToAdd, is_active = 0).exists():
+
+                            StartupTechnologyMapping.objects.filter(startup_company = companyDetailsObject, technology_type = technologyTypeMasterObjToAdd, is_active = 0).update(
+
+                            is_active = 1,
+
+                            update_date = timezone.now(),
+
+                            update_by = user_id
+
+                            )
+
+                    elif not startupTechMappingObjIn:
+
+                        startupTechnologyMappingObjectSave = StartupTechnologyMapping(startup_company = companyDetailsObject,technology_type = technologyTypeMasterObjToAdd)
+
+                        startupTechnologyMappingObjectSave.is_active = 1
+
+                        startupTechnologyMappingObjectSave.create_date = timezone.now()
+
+                        startupTechnologyMappingObjectSave.update_date = timezone.now()
+
+                        startupTechnologyMappingObjectSave.create_by = user_id
+
+                        startupTechnologyMappingObjectSave.update_by = user_id
+
+                        startupTechnologyMappingObjectSave.save()
+
+                stored_data.sort()
+
+                new_ids.sort()
+
+                if stored_data !=new_ids:
+
+                    StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Type of Technology' ,previous_value=", ".join(stored_data) if stored_data != [] else "-",new_value=", ".join(new_ids) if new_ids!= []  else "-",update_date=timezone.now(),update_by=user_id).save()
+
+                '''
+
+                indicationData
+
+                '''
+
+                for element in input_data["indication"]:
+
+                    if(str(element['isDelete']) == 'True'):
+
+                        '''
+
+                        Delete Indication If isDelete=1
+
+                        '''
+
+                        indicationMasterObj = IndicationMaster.objects.get(indication_name=element["indication"],is_active=1)
+
+                        startupIndicationDelete = StartupIndicationMapping.objects.filter(startup_company = companyDetailsObject, indication =indicationMasterObj)
+
+                        StartupChangeLog(startup_company = companyDetailsObject,affected_column_name= 'Indications',previous_value=str(element["indication"]),new_value= "Deleted " ,update_date=timezone.now(),update_by=user_id).save()
+
+                        StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Stage of Development for '+ str(element["indication"]),previous_value=",".join(element["stage"]),new_value=  "Deleted",update_date=timezone.now(),update_by=user_id).save()
+
+                        for item in startupIndicationDelete:
+
+                            item.is_active = 0
+
+                            item.update_date = timezone.now()
+
+                            item.update_by = user_id
+
+                            item.save()
+
+                    else:
+
+                        if element["indication"]!="":   
+
+                            indicationMasterObj = IndicationMaster.objects.get(indication_name=element["indication"],is_active=1)
+
+                            if StartupIndicationMapping.objects.filter(startup_company=companyDetailsObject,indication=indicationMasterObj,is_active=1).exists():
+
+                                '''
+
+                                Update Data
+
+                                '''
+
+                                development_data=[]
+
+                                developmentMappingObj=StartupIndicationMapping.objects.filter(startup_company=companyDetailsObject,indication=indicationMasterObj,is_active=1).values("development_stage_id__stage_of_development",'indication_id__indication_name')
+
+                                for object in developmentMappingObj:
+
+                                    development_temp = object.get('development_stage_id__stage_of_development')
+
+                                    if development_temp!=None:
+
+                                        development_data.append(development_temp)
+
+                                    if development_temp not in element['stage']:
+
+                                        devStageMasterObj = DevelopmentStageMaster.objects.get(stage_of_development=development_temp,is_active=1)
+
+                                        StartupIndicationMapping.objects.filter(startup_company=companyDetailsObject,indication=indicationMasterObj,is_active=1,development_stage=devStageMasterObj).update(is_active=0,
+
+                                        update_date = timezone.now(),
+
+                                        update_by =user_id
+
+                                        )
+
+                               
+
+                                logger.info(development_data)
+
+                                development_data.sort()
+
+                                new=element['stage']
+
+                                logger.info(new)
+
+                                new.sort()
+
+                                if new!= development_data:
+
+                                    StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Stage of Development for '+ str(element["indication"]),previous_value=",".join(development_data),new_value= ",".join(element['stage']),update_date=timezone.now(),update_by=user_id).save()
+
+                                for development in element['stage']:
+
+                                    if development not in development_data:
+
+                                        devStageMasterObj = DevelopmentStageMaster.objects.get(stage_of_development=development,is_active=1)
+
+                                        StartupIndicationMapping(startup_company = companyDetailsObject, indication =indicationMasterObj, is_active=1,update_date = timezone.now(),update_by =user_id,create_date=timezone.now(),create_by=user_id,development_stage=devStageMasterObj).save() 
+
+                            else:
+
+                                '''
+
+                                New indication
+
+                                '''
+
+                                
+
+                                for development in element['stage']:
+
+                                        devStageMasterObj = DevelopmentStageMaster.objects.get(stage_of_development=development,is_active=1)
+
+                                        StartupIndicationMapping(startup_company = companyDetailsObject, indication =indicationMasterObj, is_active=1,update_date = timezone.now(),update_by =user_id,create_date=timezone.now(),create_by=user_id,development_stage=devStageMasterObj).save()
+
+                                if element['stage']==[]:
+
+                                    StartupIndicationMapping(startup_company = companyDetailsObject, indication =indicationMasterObj, is_active=1,update_date = timezone.now(),update_by =user_id,create_date=timezone.now(),create_by=user_id).save()
+
+                                StartupChangeLog(startup_company = companyDetailsObject,affected_column_name= 'Indications',previous_value="-",new_value= str(element["indication"]),update_date=timezone.now(),update_by=user_id).save()
+
+                                StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Stage of Development for '+ str(element["indication"]),previous_value="-",new_value=  ",".join(element["stage"]),update_date=timezone.now(),update_by=user_id).save()
+
+                '''
+
+                Investor
+
+                '''
+
+                startupInvestorObj = StartupInvestorMapping.objects.filter(startup_company = companyDetailsObject, is_active = 1)
+
+                #  Changelog
+
+                current_investors=[]
+
+                investorMappingObj = StartupInvestorMapping.objects.filter(startup_company=companyDetailsObject, is_active=1).values_list('investor_company_id__investor_company_name')
+
+                for object in investorMappingObj:
+
+                    current_investors.append(object[0])
+
+                new_investments=input_data["currentInvestors"]
+
+                new_investments.sort()
+
+                logger.info("input_data['currentInvestors']:: ")
+
+                logger.info(new_investments)
+
+                current_investors.sort()
+
+                logger.info("current_investors:: ")
+
+                logger.info(current_investors)
+
+                if new_investments!=current_investors:
+
+                    StartupChangeLog(startup_company = companyDetailsObject,affected_column_name='Current Investors' ,previous_value=", ".join(current_investors),new_value=", ".join(new_investments),update_date=timezone.now(),update_by=user_id).save()
+
+                ### END Changelog
+
+                for item in startupInvestorObj:
+
+                    if item.investor_company.investor_company_id not in  input_data["currentInvestors"]:
+
+                        item.is_active = 0
+
+                        item.update_date = timezone.now()
+
+                        item.update_by = user_id
+
+                        item.save()
+
+                for element in input_data["currentInvestors"]:
+
+                    investorObj = InvestorCompanyDetails.objects.get(investor_company_name=element, is_active=1)
+
+                    startupInvestorMapObj  = StartupInvestorMapping.objects.filter(startup_company = companyDetailsObject, investor_company=investorObj, is_active = 1)
+
+                    if not startupInvestorMapObj:
+
+                        startupInvestorMapObjSave = StartupInvestorMapping(startup_company = companyDetailsObject, investor_company=investorObj)
+
+                        startupInvestorMapObjSave.is_active = 1
+
+                        startupInvestorMapObjSave.create_by = user_id
+
+                        startupInvestorMapObjSave.create_date = timezone.now()
+
+                        startupInvestorMapObjSave.update_by = user_id
+
+                        startupInvestorMapObjSave.update_date = timezone.now()
+
+                        startupInvestorMapObjSave.save()                        
+
+                response.data = {
+
+                'User_id':payload['id'],
+
+               'msg': "Data Updated Successfully",
+
+                }
+
+            else:
+
+                response.data = {
+
+                'User_id':payload['id'],
+
+                'msg':"Id may not be exists or startup company may not be claimed by you."
+
+                }
+
+            return response
+
+        except Exception as e:
+
+            status_code = HTTPStatus.OK
+
+            logger.exception(e)
+
+            response = {
+
+                'success': False,
+
+                'status_code':500,
+
+                'msg': "Something is Wrong.",
+
+                'error': str(e)
+
+            }
+
+            return Response(response, status=status_code)
+
+ 
